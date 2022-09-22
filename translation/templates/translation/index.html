@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset='utf-8' />
+</head>
+
+<body>
+    <div>感情を、思う存分書き出して下さい！（100~2000字）</div>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">要約と変換！</button>
+    </form>
+
+
+    <!--{{ translation_results }}-->
+    <div>
+    <textarea id="copyTarget" type="text" wrap="soft" cols="100" rows="10">{{ translation_results }}</textarea>
+    </div>
+
+    <div>
+    <button onclick="copyToClipboard()">Copy,and go to midjourney!</button>
+    </div>
+
+
+    <script>
+        function copyToClipboard() {
+            // コピー対象をJavaScript上で変数として定義する
+            var copyTarget = document.getElementById("copyTarget");
+
+            // コピー対象のテキストを選択する
+            copyTarget.select();
+
+            // 選択しているテキストをクリップボードにコピーする
+            document.execCommand("Copy");
+
+             //discordへ飛ぶ
+            if(!alert("コピーできました！" + "Discordに移動します!")){
+                window.location = "https://discord.com/"
+            }
+        }
+
+    </script>
+</body>
+
+</html>
