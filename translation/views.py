@@ -13,7 +13,7 @@ from .forms import TranslationForm
 endpoint = "https://clapi.asahi.com/abstract"
 
 # 朝日新聞APIの認証コード
-api_key = "q5DfnnSvgk2CdL195wc8d4ZqdQT90OEY4bvCS44H"
+api_key = ""
 
 # 何文字ずつ区切って要約するか。200〜2000の整数。デフォルトは500。
 length = 200
@@ -23,8 +23,8 @@ auto_paragraph = True
 
 
 # deepLの認証コード
-auth_key = "a0d905ea-e7d5-0dbb-2d5c-59746d2186ec:fx"
-translator = deepl.Translator(auth_key)
+deepL_auth_key = ""
+translator = deepl.Translator(deepL_auth_key)
 
 
 def Translation_and_Summary(request):
