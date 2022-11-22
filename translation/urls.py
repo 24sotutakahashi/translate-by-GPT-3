@@ -3,5 +3,5 @@ from . import views
 
 app_name = "translation"
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.Translation_and_Summary, name="Translation_and_Summary"),
 ]
