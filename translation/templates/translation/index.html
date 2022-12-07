@@ -1,57 +1,35 @@
+{% extends "translation\base.html" %}
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
 
-<!DOCTYPE html>
-<html lang="ja">
-
-<head>
-    <meta charset='utf-8' />
-</head>
-
-<body>
-    <div>感情を、思う存分書き出して下さい!（100~2000字）</div>
-    
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">要約・英訳・画像生成！</button>
-    </form>
-
-
-    <!--英訳した要約を表示-->
-    <div>
-    <textarea id="copyTarget" type="text" wrap="soft" cols="100" rows="10">{{ translation_results }}</textarea>
+<div class="row">
+    <div class="text-center mb-5">
+    <p class="text-muted fs-3">感情を、思う存分書き出して下さい!（100から2000字まで）</p>
     </div>
 
+    <form method="POST">
+        {% csrf_token %}
+        <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">要約・英訳・画像生成！</button>
+        </div>
+    </form>
+    
+    <!--英訳した要約を表示-->
+    <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
+        <textarea id="copyTarget" type="text" cols="70" rows="15" class="mt-4">{{ translation_results }}</textarea>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
+        <button onclick="copyToClipboard()" class="btn btn-primary m-4">内容をコピーしてMidjourneyを使う方はこちら!</button>
+    </div>
+    
     <!--{{ 生成した画像の表示 }}-->
     <!--画像のURLを渡した時だけ表示-->
     {% for result_url in result_urls %}
-    <div>
-    <img src="{{ result_url }}" width="300" height="300">
+    <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
+        <img src="{{ result_url }}" width="500" height="500" class="m-4" style="text-align: center;">
     </div>
     {% endfor %}
-
-    <div>
-    <button onclick="copyToClipboard()">内容をコピーしてMidjourneyを使う方はこちら!</button>
-    </div>
-
-
-    <script>
-        function copyToClipboard() {
-            // コピー対象をJavaScript上で変数として定義する
-            var copyTarget = document.getElementById("copyTarget");
-
-            // コピー対象のテキストを選択する
-            copyTarget.select();
-
-            // 選択しているテキストをクリップボードにコピーする
-            document.execCommand("Copy");
-
-             //discordへ飛ぶ
-            if(!alert("コピーできました！" + "Discordに移動します!")){
-                window.location = "https://discord.com/"
-            }
-        }
-
-    </script>
-</body>
-
-</html>
+</div>
+{% endblock %}
