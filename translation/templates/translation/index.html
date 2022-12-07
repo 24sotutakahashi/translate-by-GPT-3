@@ -7,22 +7,30 @@
 </head>
 
 <body>
-    <div>感情を、思う存分書き出して下さい！（100~2000字）</div>
+    <div>感情を、思う存分書き出して下さい!（100~2000字）</div>
     
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">要約と英訳！</button>
+        <button type="submit">要約・英訳・画像生成！</button>
     </form>
 
 
-    <!--{{ translation_results }}-->
+    <!--英訳した要約を表示-->
     <div>
     <textarea id="copyTarget" type="text" wrap="soft" cols="100" rows="10">{{ translation_results }}</textarea>
     </div>
 
+    <!--{{ 生成した画像の表示 }}-->
+    <!--画像のURLを渡した時だけ表示-->
+    {% for result_url in result_urls %}
     <div>
-    <button onclick="copyToClipboard()">コピーして、Midjourneyへ!</button>
+    <img src="{{ result_url }}" width="300" height="300">
+    </div>
+    {% endfor %}
+
+    <div>
+    <button onclick="copyToClipboard()">内容をコピーしてMidjourneyを使う方はこちら!</button>
     </div>
 
 
