@@ -9,9 +9,10 @@ from django.template import loader
 
 from .forms import TranslationForm
 
+from .settings_secret import *
 
 # 朝日APIの認証コードと設定
-api_key = ""
+asahi_api_key = asahi_api_key_from_secret
 endpoint = "https://clapi.asahi.com/abstract"
 
 # 何文字ずつ区切って要約するか。200〜2000の整数。デフォルトは500。
@@ -22,11 +23,11 @@ auto_paragraph = True
 
 
 # deepLの認証コードと設定
-deepL_auth_key = ""
+deepL_auth_key = deepL_auth_key_from_secret
 translator = deepl.Translator(deepL_auth_key)
 
 # openaiの認証コード
-openai.api_key = ""
+openai.api_key = openai_api_key_from_secret
 
 
 def Translation_and_Summary(request):
@@ -59,7 +60,7 @@ def Translation_and_Summary(request):
             # リクエストの書式と認証方式を指定
             headers = {"accept": "application/json",
                        "Content-Type": "application/json",
-                       "x-api-key": api_key}
+                       "x-api-key": asahi_api_key}
 
             # リクエスト送信
             response = requests.post(endpoint, input_json, headers=headers)
