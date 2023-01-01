@@ -97,7 +97,7 @@ def Translation_and_Summary(request):
     return HttpResponse(template.render(context, request))
 
 
-# 画像のURLのリストを返す
+# 引数を基に画像を生成し、そのURLのリストを返す
 def Get_Image_URL(English_Summary):
     # 戻り値を複数返すためのリストの箱を作る
     URL_List = []
