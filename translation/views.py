@@ -30,8 +30,6 @@ translator = deepl.Translator(deepL_auth_key)
 
 # openaiの認証コード
 openai.api_key = openai_api_key_from_secret
-# ChatGPTのAPIキーを設定する
-API_KEY = openai_api_key_from_secret
 
 
 def call_chat_gpt_api(request):
@@ -48,7 +46,7 @@ def call_chat_gpt_api(request):
         if form.is_valid():
             # フォームの内容を取得
             sentence = form.cleaned_data['sentence']
-            sentence = "以下の文章を要約してから、それを英訳して。"+sentence
+            sentence = "以下の文章を50文字ほどに要約して、要約したものを英語にしてください。"+sentence
 
             response = openai.Completion.create(
                 model="text-davinci-003",
@@ -56,9 +54,8 @@ def call_chat_gpt_api(request):
                 temperature=0.9,
                 max_tokens=150,
                 top_p=1,
-                frequency_penalty=0,
+                frequency_penalty=1,
                 presence_penalty=0.6,
-                stop=[" Human:", " AI:"]
             )
             results = response['choices'][0]['text']
 
