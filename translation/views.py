@@ -11,6 +11,8 @@ from .forms import TranslationForm
 
 from .settings_secret import *
 
+import requests
+
 # 朝日APIの認証コードと設定
 asahi_api_key = asahi_api_key_from_secret
 endpoint = "https://clapi.asahi.com/abstract"
@@ -28,15 +30,13 @@ translator = deepl.Translator(deepL_auth_key)
 
 # openaiの認証コード
 openai.api_key = openai_api_key_from_secret
+# ChatGPTのAPIキーを設定する
+API_KEY = openai_api_key_from_secret
 
 
-def Translation_and_Summary(request):
-
+def call_chat_gpt_api(request):
     # 翻訳結果を入れる変数を準備
-    translation_results = ""
-
-    # 英訳した要約を入れるリストを準備
-    ENG_SUM = []
+    results = ""
 
     # 生成した画像のURLを入れるリストを用意
     result_urls = []
@@ -44,46 +44,26 @@ def Translation_and_Summary(request):
     if request.method == "POST":
         # 「要約と英訳！」ボタンを押したときの、フォームの内容を取得
         form = TranslationForm(request.POST)
-
-        # 英訳した要約を入れるリストの中身をリセット
-        ENG_SUM.clear()
-
         # バリデーションチェック
         if form.is_valid():
             # フォームの内容を取得
             sentence = form.cleaned_data['sentence']
+            sentence = "以下の文章を要約してから、それを英訳して。"+sentence
 
-            # フォームの内容を、朝日新聞APIのためにJSON に変換
-            input_json = json.dumps(
-                {"text": sentence, "length": length, "auto_paragraph": auto_paragraph})
+            response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=sentence,
+                temperature=0.9,
+                max_tokens=150,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0.6,
+                stop=[" Human:", " AI:"]
+            )
+            results = response['choices'][0]['text']
 
-            # リクエストの書式と認証方式を指定
-            headers = {"accept": "application/json",
-                       "Content-Type": "application/json",
-                       "x-api-key": asahi_api_key}
-
-            # リクエスト送信
-            response = requests.post(endpoint, input_json, headers=headers)
-
-            # エンドポイントからレスポンスあった時の処理
-            if response.status_code == 200:
-                # 結果をresultに入れる
-                result = response.json()["result"]
-
-                # resultを1つずつ英訳
-                for i in result:
-                    English_Summary = translator.translate_text(
-                        i, target_lang="EN-US")
-                    # リストに追加
-                    ENG_SUM.append(English_Summary.text)
-
-                # リストにある英訳した要約を、1文にする。
-                translation_results = ",".join(ENG_SUM)
-
-                # 英訳した要約を基に、画像生成のURLを取得
-                result_urls = Get_Image_URL(translation_results)
-            else:
-                pass
+            # 英訳した要約を基に、画像生成のURLを取得
+            result_urls = Get_Image_URL(results)
     else:
         form = TranslationForm()
 
@@ -91,7 +71,7 @@ def Translation_and_Summary(request):
 
     context = {
         'form': form,
-        'translation_results': translation_results,
+        'translation_results': results,
         'result_urls': result_urls
     }
     return HttpResponse(template.render(context, request))

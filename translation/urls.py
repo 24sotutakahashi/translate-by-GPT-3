@@ -3,5 +3,5 @@ from . import views
 
 app_name = "translation"
 urlpatterns = [
-    path("", views.Translation_and_Summary, name="Translation_and_Summary"),
+    path("", views.call_chat_gpt_api, name="call_chat_gpt_api"),
 ]
