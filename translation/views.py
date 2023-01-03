@@ -46,11 +46,12 @@ def call_chat_gpt_api(request):
         if form.is_valid():
             # フォームの内容を取得
             sentence = form.cleaned_data['sentence']
-            sentence = "以下の文章を50文字ほどに要約して、要約したものを英語にしてください。"+sentence
+            orderMessage = "以下の文章を50文字ほどに要約して、要約したものを英語にしてください。"
+            sendingMessage = orderMessage + sentence
 
             response = openai.Completion.create(
                 model="text-davinci-003",
-                prompt=sentence,
+                prompt=sendingMessage,
                 temperature=0.9,
                 max_tokens=150,
                 top_p=1,
