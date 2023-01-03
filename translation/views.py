@@ -46,8 +46,10 @@ def call_chat_gpt_api(request):
         if form.is_valid():
             # フォームの内容を取得
             sentence = form.cleaned_data['sentence']
-            orderMessage = "以下の文章を50文字ほどに要約して、要約したものを英語にしてください。"
-            sendingMessage = orderMessage + sentence
+            # 命令を自動追加
+            orderMessage = "以下の文章を50文字程度に要約して、その要約したものを表した、感情や表情や動作だけを、アート風に、英語に直してカンマ区切りで教えて。:"
+            # 自動追加する命令とフォームの内容を、改行を挟んで結合。
+            sendingMessage = orderMessage + "\n" + sentence
 
             response = openai.Completion.create(
                 model="text-davinci-003",
@@ -58,7 +60,16 @@ def call_chat_gpt_api(request):
                 frequency_penalty=1,
                 presence_penalty=0.6,
             )
-            results = response['choices'][0]['text']
+            # GPT-APIからの結果を、文字列として取得
+            pre_results = response['choices'][0]['text']
+            # デフォルトで入っている'/n'を、"”(空文字列)と置き換える
+            results = pre_results.replace("\n", "").replace("\r", "")
+
+            # 画像生成の際の、追加の命令
+            additional_orderMessage_to_img = "digital art,"
+
+            # 画像生成の際の追加の命令を、結果と結合
+            results = additional_orderMessage_to_img + results
 
             # 英訳した要約を基に、画像生成のURLを取得
             result_urls = Get_Image_URL(results)
