@@ -3,7 +3,6 @@ import json
 import openai
 
 import deepl
-import requests
 from django.http import HttpResponse
 from django.template import loader
 
@@ -12,6 +11,7 @@ from .forms import TranslationForm
 from .settings_secret import *
 
 import requests
+import re
 
 # 朝日APIの認証コードと設定
 asahi_api_key = asahi_api_key_from_secret
@@ -47,7 +47,7 @@ def call_chat_gpt_api(request):
             # フォームの内容を取得
             sentence = form.cleaned_data['sentence']
             # 命令を自動追加
-            orderMessage = "以下の文章を50文字程度に要約して、その要約したものを表した、感情や表情や動作だけを、アート風に、英語に直してカンマ区切りで教えて。:"
+            orderMessage = "まず以下の文章を50文字程度に要約して、それを表す感情や表情や動作だけを抜き出してください。最後にその抜き出した感情や表情や動作を、英語に訳して、カンマ区切りで教えてください。"
             # 自動追加する命令とフォームの内容を、改行を挟んで結合。
             sendingMessage = orderMessage + "\n" + sentence
 
@@ -55,18 +55,23 @@ def call_chat_gpt_api(request):
                 model="text-davinci-003",
                 prompt=sendingMessage,
                 temperature=0.9,
-                max_tokens=150,
+                max_tokens=1024,
                 top_p=1,
                 frequency_penalty=1,
                 presence_penalty=0.6,
             )
-            # GPT-APIからの結果を、文字列として取得
             pre_results = response['choices'][0]['text']
             # デフォルトで入っている'/n'を、"”(空文字列)と置き換える
             results = pre_results.replace("\n", "").replace("\r", "")
 
+            # 日本語と「。」「、」だけを削除
+            results = re.sub(
+                r'[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf|、|。]', "", results)
+            # カンマが連続した場合、それを削除
+            results = results.replace(",,", "")
+
             # 画像生成の際の、追加の命令
-            additional_orderMessage_to_img = "digital art,"
+            additional_orderMessage_to_img = "digital art, "
 
             # 画像生成の際の追加の命令を、結果と結合
             results = additional_orderMessage_to_img + results

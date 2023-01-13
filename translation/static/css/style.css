@@ -5,10 +5,11 @@
 }
 
 body {
-    background: #d5cece;
+    background: #87CEEB;
     display: flex;
     flex-flow: column;
     min-height: 100vh;
+    font-family: Arial, sans-serif;
 }
 
 .row {

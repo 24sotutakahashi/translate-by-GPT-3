@@ -5,7 +5,7 @@
 
 <div class="row">
     <div class="text-center mb-5">
-    <p class="text-muted fs-3">感情を、思う存分書き出して下さい!（100から2000字まで）</p>
+    <p class="text-muted fs-3">感情を、思う存分書き出して下さい!</p>
     </div>
 
     <form method="POST">
@@ -17,6 +17,10 @@
     </form>
     
     <!--英訳した要約を表示-->
+    <div class="text-center mb-5">
+        <p class="text-muted fs-3 mt-3">以下に、要約した感情の英訳を記載します。<br>内容をコピーしてMidjourneyを使う方は、下のボタンを押してください!</p>
+    </div>
+
     <div class="col-sm-12 col-md-12 col-lg-12" style="text-align: center;">
         <textarea id="copyTarget" type="text" cols="70" rows="15" class="mt-4">{{ translation_results }}</textarea>
     </div>
