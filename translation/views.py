@@ -1,8 +1,6 @@
 from base64 import urlsafe_b64decode
-import json
 import openai
 
-import deepl
 from django.http import HttpResponse
 from django.template import loader
 
@@ -10,23 +8,7 @@ from .forms import TranslationForm
 
 from .settings_secret import *
 
-import requests
 import re
-
-# 朝日APIの認証コードと設定
-asahi_api_key = asahi_api_key_from_secret
-endpoint = "https://clapi.asahi.com/abstract"
-
-# 何文字ずつ区切って要約するか。200〜2000の整数。デフォルトは500。
-length = 200
-
-# 要約の際に、元の文章を自動的に段落分けをするか否か
-auto_paragraph = True
-
-
-# deepLの認証コードと設定
-deepL_auth_key = deepL_auth_key_from_secret
-translator = deepl.Translator(deepL_auth_key)
 
 # openaiの認証コード
 openai.api_key = openai_api_key_from_secret
